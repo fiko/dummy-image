@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Borizqy Dummy Image
+ * Borizqy Dummy Image: Main
  * 
- * This library builded for developers or graphic designers to generate 
- * dummy image easier by using CSS experience.
+ * (This is a main class used to generate image) - This library 
+ * builded for developers or graphic designers to generate dummy 
+ * image easier by using CSS experience.
  * 
  * @package Borizqy
  * @subpackage Dummy Image
@@ -16,12 +17,15 @@
 
 namespace Borizqy\DummyImage;
 
+use Borizqy\DummyImage\Controller;
+
 /**
  * Dummy Image Base Class
  * 
+ * Basic Class of Borizqy Dummy Image.
  * @access public
  */
-class DummyImage {
+class DummyImage extends Controller {
 
 	/**
 	 * Image Stylesheet
@@ -46,23 +50,23 @@ class DummyImage {
 	 * - background-color	(Default: #DCDDE1) Background color in hex color.
 	 * - background-image	(Default: none) Backgroung image. If you don't 
 	 * 						decide it, Dummy-Image will show only background-color
-	 * - format 			(Default: png) Extra attribute that does not exists on 
+	 * - extension 			(Default: png) Extra attribute that does not exists on 
 	 * 						real CSS. This attribute will set the image extension. 
 	 * 						(Availables: png, jpg, jpeg, gif)
 	 * 
 	 * @var $control
 	 */
 	protected $control = [
-		'content' => null,
-		'font-size' => 20,
-		'text-align' => 'center',
-		'vertical-align' => 'middle',
-		'width' => 400,
-		'height' => 200,
-		'background-color' => '#DCDDE1',
-		'color' => '#565756',
-		'format' => 'png',
-		'font-family' => 'lato',
+		"content" => null,
+		"font-size" => "20pt",
+		"text-align" => "center",
+		"vertical-align" => "middle",
+		"width" => "400px",
+		"height" => "200px",
+		"background-color" => "#DCDDE1",
+		"color" => "#565756",
+		"extension" => "png",
+		"font-family" => "lato",
 		// 'background-image' => 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
 	];
 
@@ -130,36 +134,50 @@ class DummyImage {
 		if (!is_array($control)) return false;
 
 		/**
-		 * merging custom controller to default controller
+		 * merging custom controller to default controller, and then 
+		 * changing to lowercase
 		 * @see $this->control
 		 */
-		$this->control = array_merge($this->control, $control);
+		$this->control = array_change_key_case(array_merge($this->control, $control));
+
+		/**
+		 * Setting up controllers's value
+		 * @see Controller::setupController
+		 */
+		$this->setupController();
 
 		/**
 		 * setting image filename
 		 * @see $this->control['width'] Image width
 		 * @see $this->control['height'] Image height
-		 * @see $this->control['format'] Image extension
+		 * @see $this->control['extension'] Image extension
 		 */
-		header("Content-Disposition: inline; filename=\"dummy_image-{$this->control['width']}x{$this->control['height']}.{$this->control['format']}\"");
+		header("Content-Disposition: inline; filename=\"dummy_image-{$this->control['width']}x{$this->control['height']}.{$this->control['extension']}\"");
 		
 		/**
 		 * setting page as an image file
-		 * @see string $this->control['format'] Image extension
+		 * @see string $this->control['extension'] Image extension
 		 */
-		header("Content-type: image/{$this->control['format']}");
+		header("Content-type: image/{$this->control['extension']}");
 
 		/**
 		 * Setting up image by width and height.
-		 * @var integer $this->control['width'] Image width
-		 * @var integer $this->control['height'] Image height
+		 * @see $this->control['width'] Image width
+		 * @see $this->control['height'] Image height
 		 */
 		$this->image = imagecreatetruecolor($this->control['width'], $this->control['height']);
 		
 		/**
+		 * Setting up background color
+		 * @see $this->image 					(Result) Image updated
+		 * @see Controller::backgroundColor()	(Required) Getting background color
+		 */
+		imagefill($this->image, 0, 0, $this->backgroundColor());
+		
+		/**
 		 * if background-image controller exists, then background-image setup 
 		 * will be called.
-		 * @see self::setupBackgroundImage()
+		 * @see Controller::setupBackgroundImage()
 		 */
 		$this->setupBackgroundImage();
 
@@ -172,12 +190,11 @@ class DummyImage {
 		$this->control['content'] = is_integer($this->control['content']) || is_string($this->control['content'])? $this->control['content']: "{$this->control['width']} x {$this->control['height']}";
 
 		/**
-		 * Preparing Each Letter - Getting image size of one letter, to get 
-		 * size of each letter.
+		 * Preparing Each Letter - Getting width and height of for each letter
 		 * @see $this->text['letter'] 		(Result) Array of size information of 
 		 * 									one letter.
 		 * @see $this->control['font-size']	(Required) font size in points
-		 * @see self::fontFamily() 			(Required) getting font family on 
+		 * @see Controller::fontFamily() 	(Required) getting font family on 
 		 * 									"./inc/fonts/" directory.
 		 */
 		$this->text['letter'] = imagettfbbox($this->control['font-size'], 0, $this->fontFamily(), 'X');
@@ -198,161 +215,43 @@ class DummyImage {
 		 * @see $this->control['background-image']	(Required) Will be checked, is it exists.
 		 * @see $this->control['width']				(Required) Getting image width.
 		 * @see $this->control['height']			(Required) Getting image height.
-		 * @see self::backgroundColor()				(Required) Getting background color
+		 * @see Controller::backgroundColor()		(Required) Getting background color
 		 * 											of the image.
 		 */
-		if (!isset($this->control['background-image'])) {
-			imagefilledrectangle($this->image, 0, 0, $this->control['width'], $this->control['height'], $this->backgroundColor());
-		}
+		// if (!isset($this->control['background-image'])) {
+		// 	imagefilledellipse($this->image, 19.5, 19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledellipse($this->image, 19.5, $this->control['height']-19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledellipse($this->image, $this->control['width']-19.5, $this->control['height']-19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledellipse($this->image, $this->control['width']-19.5, 19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledrectangle($this->image, 0, 19.5, $this->control['width'], $this->control['height']-19.5, $this->backgroundColor());
+		// 	imagefilledrectangle($this->image, 19.5, 0, $this->control['width']-19.5, $this->control['height'], $this->backgroundColor());
+		// }
+		
+		/**
+		 * Make black color transparance
+		 * @see $this->image	(Result) Updating image by transparing black color
+		 */
+		imagecolortransparent($this->image, imagecolorallocate($this->image, 0, 0, 0));
 
 		/**
 		 * Setting up text on the image
-		 * @see $this->image 					(Result) 
-		 * @see $this->control['font-size']		(Required) 
-		 * @see $this->control['content']		(Required) 
-		 * @see $this->textAlign()				(Required) 
-		 * @see $this->verticalAlign()			(Required) 
-		 * @see $this->color()					(Required) 
-		 * @see $this->fontFamily()				(Required) 
+		 * @see $this->image 					(Result) This will be updated by text on the image
+		 * @see $this->control['font-size']		(Required) Getting font size for the text
+		 * @see $this->control['content']		(Required) Getting text that will be put on image
+		 * @see $this->textAlign()				(Required) Getting horizontal text alignment
+		 * @see $this->verticalAlign()			(Required) Getting vertical text alignment
+		 * @see $this->color()					(Required) Getting text color
+		 * @see $this->fontFamily()				(Required) Getting font from "./inc/fonts/" directory
 		 */
 		imagettftext($this->image, $this->control['font-size'], 0, $this->textAlign(), $this->verticalAlign(), $this->color(), $this->fontFamily(), $this->control['content']);
 
-		// Using imagepng() results in clearer text compared with imagejpeg()
-		switch ($this->control['format']) {
-			// JPEG
-			case 'jpg':
-			case 'jpeg':
-				imagejpeg($this->image);
-				break;
-			
-			// GIF
-			case 'gif':
-				imagegif($this->image);
-				break;
-			
-			// PNG
-			default:
-				imagepng($this->image);
-				break;
-		}
+		/**
+		 * Build image base on extension
+		 * @see Controller::buildImage() (Result) Build the image.
+		 */
+		$this->buildImage();
 
-		// destrying image
-		imagedestroy($this->image);
-
-		// return print_r(self::$control);
-	}
-
-	protected function getColor($attr) {
-		if (strlen($this->control[$attr]) == "3") {
-			$r = hexdec(substr($this->control[$attr], 0, 1) . substr($this->control[$attr], 0, 1));
-			$g = hexdec(substr($this->control[$attr], 1, 1) . substr($this->control[$attr], 1, 1));
-			$b = hexdec(substr($this->control[$attr], 2, 1) . substr($this->control[$attr], 2, 1));
-		} else if (strlen($this->control[$attr]) == "4") {
-			$r = hexdec(substr($this->control[$attr], 1, 1) . substr($this->control[$attr], 1, 1));
-			$g = hexdec(substr($this->control[$attr], 2, 1) . substr($this->control[$attr], 2, 1));
-			$b = hexdec(substr($this->control[$attr], 3, 1) . substr($this->control[$attr], 3, 1));
-		} else if (strlen($this->control[$attr]) == "7") {
-			$r = hexdec(substr($this->control[$attr], 1, 2));
-			$g = hexdec(substr($this->control[$attr], 3, 2));
-			$b = hexdec(substr($this->control[$attr], 5, 2));
-		} else {
-			$r = hexdec(substr($this->control[$attr], 0, 2));
-			$g = hexdec(substr($this->control[$attr], 2, 2));
-			$b = hexdec(substr($this->control[$attr], 4, 2));
-		}
-		return imagecolorallocate($this->image, $r, $g, $b);
-	}
-
-	protected function backgroundColor() {
-		return $this->getColor('background-color');
-	}
-
-	protected function color() {
-		return $this->getColor('color');
-	}
-
-	protected function textAlign() {
-		switch ($this->control['text-align']) {
-			// left alignment
-			case 'left':
-				return 0;
-				break;
-			
-			// right alignment
-			case 'right':
-				return $this->control['width'] - abs($this->text['sentence'][2] - $this->text['sentence'][6]);
-				break;
-			
-			// center alignment
-			case 'center': default:
-				return ($this->control['width'] / 2) - (abs($this->text['sentence'][2] - $this->text['sentence'][6]) / 2);
-				break;
-		}
-	}
-
-	protected function verticalAlign() {
-		switch ($this->control['vertical-align']) {
-			// top alignment
-			case 'top':
-				return $this->text['letter'][1] - $this->text['letter'][5];
-				break;
-			
-			// bottom alignment
-			case 'bottom':
-				return $this->control['height'] - $this->text['sentence'][1];
-				break;
-			
-			// middle alignment
-			case 'middle': default:
-				$return = ($this->control['height']/2);
-				$return += $this->text['letter'][1] - $this->text['letter'][5];
-				$return -= ($this->text['sentence'][1] - $this->text['sentence'][5]) / 2;
-				return $return;
-				break;
-		}
-	}
-
-	protected function fontFamily() {
-		$font = strtolower($this->control['font-family']);
-		$dir = $this->font_dir;
-
-		if (file_exists($dir . $font . '.ttf')) {
-			$font = $font . '.ttf';
-		} else {
-			$font = 'lato.ttf';
-		}
-
-		return $dir . $font;
-	}
-
-	protected function setupBackgroundImage() {
-		if (isset($this->control['background-image'])) {
-			$this->control['background-image'] = str_replace([
-				"url(\"", "\")",
-				"url('", "')",
-				"url(", ")",
-			], '', $this->control['background-image']);
-			$extension = explode(".", $this->control['background-image']);
-			$extension = end($extension);
-			switch ($extension) {
-				case 'jpg': case 'jpeg':
-					$this->image = imagecreatefromjpeg($this->control['background-image']);
-					break;
-
-				case 'gif':
-					$this->image = imagecreatefromgif($this->control['background-image']);
-					break;
-				
-				default:
-					$this->image = imagecreatefrompng($this->control['background-image']);
-					break;
-			}
-			$this->image = imagecrop($this->image, [
-				'x' => (imagesx($this->image)/2)-($this->control['width']/2),
-				'y' => (imagesy($this->image)/2)-($this->control['height']/2),
-				'width' => $this->control['width'],
-				'height' => $this->control['height'],
-			]);
-		}
+		// return null or nothing
+		return null;
 	}
 }
