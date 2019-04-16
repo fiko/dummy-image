@@ -208,6 +208,24 @@ class DummyImage extends Controller {
 		 * @see $this->control['content']	(Required) Text that will be showed
 		 */
 		$this->text['sentence'] = imagettfbbox($this->control['font-size'], 0, $this->fontFamily(), $this->control['content']);
+
+		/**
+		 * Setting up background color, if background-image didn't set.
+		 * @see $this->image						(Result) Process will be saved here
+		 * @see $this->control['background-image']	(Required) Will be checked, is it exists.
+		 * @see $this->control['width']				(Required) Getting image width.
+		 * @see $this->control['height']			(Required) Getting image height.
+		 * @see Controller::backgroundColor()		(Required) Getting background color
+		 * 											of the image.
+		 */
+		// if (!isset($this->control['background-image'])) {
+		// 	imagefilledellipse($this->image, 19.5, 19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledellipse($this->image, 19.5, $this->control['height']-19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledellipse($this->image, $this->control['width']-19.5, $this->control['height']-19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledellipse($this->image, $this->control['width']-19.5, 19.5, 39, 39, $this->backgroundColor());
+		// 	imagefilledrectangle($this->image, 0, 19.5, $this->control['width'], $this->control['height']-19.5, $this->backgroundColor());
+		// 	imagefilledrectangle($this->image, 19.5, 0, $this->control['width']-19.5, $this->control['height'], $this->backgroundColor());
+		// }
 		
 		/**
 		 * Make black color transparance
