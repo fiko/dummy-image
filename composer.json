@@ -1,0 +1,22 @@
+{
+	"name": "fikoborizqy/dummy-image",
+	"description": "An image placeholder to get attention that this image need to be replaced. You can make an image by using basic CSS experience.",
+	"type": "library",
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Fiko Borizqy",
+			"email": "fiko@dr.com"
+		}
+	],
+	"autoload": {
+		"classmap": [
+			"src/Controller.php",
+			"src/DummyImage.php"
+		]
+	},
+	"minimum-stability": "dev"
+}
