@@ -152,7 +152,7 @@ class DummyImage extends Controller {
 		 * @see $this->control['height'] Image height
 		 * @see $this->control['extension'] Image extension
 		 */
-		header("Content-Disposition: inline; filename=\"dummy_image-{$this->control['width']}x{$this->control['height']}.{$this->control['extension']}\"");
+		header("Content-Disposition: inline; filename=\"bdi-{$this->control['width']}x{$this->control['height']}.{$this->control['extension']}\"");
 		
 		/**
 		 * setting page as an image file
@@ -251,7 +251,7 @@ class DummyImage extends Controller {
 		 */
 		$this->buildImage();
 
-		// return null or nothing
-		return null;
+		// No more code allowed once this method executed
+		exit;
 	}
 }
