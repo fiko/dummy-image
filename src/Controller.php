@@ -40,19 +40,6 @@ abstract class Controller {
 		
 		// removing "px" on "height", then converting to integer
 		$this->control['height'] = intval(str_replace('px', '', $this->control['height']));
-
-		/**
-		 * Setting up border-radius
-		 */
-		// $borderRadius = $this->getControlPosition('border-radius');
-		// $borderTopLeftRadius = $this->getControlPosition('border-top-left-radius');
-		// $borderTopRightRadius = $this->getControlPosition('border-top-right-radius');
-		// $borderBottomRightRadius = $this->getControlPosition('border-bottom-right-radius');
-		// $borderBottomLeftRadius = $this->getControlPosition('border-bottom-left-radius');
-		// $this->control['border-top-left-radius']
-		// $this->control['border-top-right-radius']
-		// $this->control['border-bottom-right-radius']
-		// $this->control['border-bottom-left-radius']
 	}
 
 
