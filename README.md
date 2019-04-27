@@ -2,6 +2,8 @@
 
 An image placeholder to get attention that this image need to be replaced. You can make an image by using basic CSS experience.
 
+Check the Demo here: [DEMO](http://fiko.atwebpages.com/)
+
 ## How to install?
 
 We recommend you to install this library by using composer. But, if you don't use composer you can still install it manually by downloading it.
